@@ -1,0 +1,13 @@
+name: slim_derivative_sim
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - slim=3.8
+  - numpy
+  - pandas
+  - matplotlib
+  - scikit-allel
+  - tskit
+  - jupyterlab
+  - ipython
