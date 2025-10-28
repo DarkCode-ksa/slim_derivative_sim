@@ -1,4 +1,6 @@
 #!/bin/bash
-# تحديث البيئة وتثبيت SLiM
-conda install -c conda-forge slim -y
-chmod +x simulation/run_simulation.sh
+# postBuild لتثبيت SLiM يدوياً
+wget https://github.com/MesserLab/SLiM/releases/download/v3.8.1/SLiM-v3.8.1-linux-x86_64.tar.gz
+tar -xzf SLiM-v3.8.1-linux-x86_64.tar.gz -C $HOME
+export PATH=$HOME/SLiM-v3.8.1/bin:$PATH
+chmod +x $HOME/SLiM-v3.8.1/bin/slim
