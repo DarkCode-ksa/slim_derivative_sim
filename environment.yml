@@ -2,7 +2,7 @@ name: slim_derivative_sim
 channels:
   - conda-forge
 dependencies:
-  - python=3.11
+  - python=3.10
   - slim=3.8
   - numpy
   - pandas
