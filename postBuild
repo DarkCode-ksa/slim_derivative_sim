@@ -1,0 +1,4 @@
+#!/bin/bash
+# تحديث البيئة وتثبيت SLiM
+conda install -c conda-forge slim -y
+chmod +x simulation/run_simulation.sh
