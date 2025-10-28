@@ -1,6 +1,6 @@
 #!/bin/bash
-# postBuild لتثبيت SLiM يدوياً
-wget https://github.com/MesserLab/SLiM/releases/download/v3.8.1/SLiM-v3.8.1-linux-x86_64.tar.gz
-tar -xzf SLiM-v3.8.1-linux-x86_64.tar.gz -C $HOME
-export PATH=$HOME/SLiM-v3.8.1/bin:$PATH
-chmod +x $HOME/SLiM-v3.8.1/bin/slim
+# تثبيت SLiM من GitHub
+git clone --branch v3.8.1 https://github.com/MesserLab/SLiM.git /home/jovyan/SLiM
+cd /home/jovyan/SLiM
+make
+ln -s /home/jovyan/SLiM/slim /usr/local/bin/slim
