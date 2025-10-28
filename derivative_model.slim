@@ -1,0 +1,78 @@
+// ==============================================
+// SLiM 3 Script: Derivative Creation Model Simulation
+// ==============================================
+
+initialize() {
+    initializeSLiMOptions(keepPedigrees=T);
+    initializeMutationRate(1e-8);
+    initializeMutationType("m1", 0.5, "f", 0.0);
+    initializeGenomicElementType("g1", m1, 1.0); // autosomes/X
+    initializeGenomicElementType("g2", m1, 1.0); // Y chromosome
+    initializeGenomicElementType("g3", m1, 1.0); // mtDNA
+
+    initializeGenomicElement(g1, 0, 999999);
+    initializeGenomicElement(g2, 1000000, 1099999);
+    initializeGenomicElement(g3, 1100000, 1109999);
+
+    initializeRecombinationRate(c(1e-8, 0.0, 0.0), c(999999, 1099999, 1109999));
+    initializeSex("A");
+}
+
+1 {
+    sim.addSubpop("p1", 2);
+    p1.individuals.setSex(c("M","F"));
+    p1.individuals[1].genomes[0].setMutationRate(1e-7, g3);
+}
+
+1:1000 {
+    targetSize = round(2 * exp(0.01 * sim.generation));
+    p1.setSubpopulationSize(targetSize);
+}
+
+100 {
+    catn("=== Patrilineal Skew Scenario ===");
+    males = p1.individuals[p1.individuals.sex == "M"];
+    toRemove = sample(males, size=asInteger(0.7*males.size()), replace=F);
+    p1.removeIndividuals(toRemove);
+}
+
+200 {
+    catn("=== Wave of Replacement Scenario ===");
+    p2 = sim.addSubpopSplit("p2", asInteger(0.5*p1.individualCount), p1);
+    for (i in 1:1000) {
+        ind = sample(p2.individuals,1);
+        genome = sample(ind.genomes,1);
+        genome.addNewMutation(m1, sample(0:999999,1));
+    }
+}
+
+300 {
+    catn("=== X Chromosome Duplication Scenario ===");
+    females = p1.individuals[p1.individuals.sex == "F"];
+    for (ind in females) {
+        if (runif(1) < 0.05) {
+            genome = ind.genomes[0];
+            for (i in 1:10) {
+                genome.addNewMutation(m1, sample(0:999999,1));
+            }
+        }
+    }
+}
+
+8000 late() {
+    catn("=== Sampling and Data Export ===");
+    p1.genomes.outputVCF(filePath="data/derivation_output.vcf");
+
+    Y_coal = sim.treeSeqCoalescenceTimes(p1, g2);
+    mtDNA_coal = sim.treeSeqCoalescenceTimes(p1, g3);
+    catn("Y-chromosome coalescence: " + Y_coal + " generations");
+    catn("mtDNA coalescence: " + mtDNA_coal + " generations");
+
+    diversity_autosome = p1.geneticDiversity(g1);
+    diversity_X = p1.geneticDiversity(g1, sex="F");
+    catn("Autosome/X diversity: " + diversity_autosome);
+    catn("X diversity (females): " + diversity_X);
+
+    sim.treeSeqOutput("data/derivation.trees");
+    sim.simulationFinished();
+}
