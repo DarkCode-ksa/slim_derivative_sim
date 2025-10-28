@@ -3,11 +3,9 @@ channels:
   - conda-forge
 dependencies:
   - python=3.10
-  - slim=3.8
   - numpy
   - pandas
   - matplotlib
   - scikit-allel
   - tskit
   - jupyterlab
-  - ipython
